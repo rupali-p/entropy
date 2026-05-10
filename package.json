@@ -1,0 +1,26 @@
+{
+  "name": "entropy",
+  "version": "1.0.0",
+  "description": "collection of silly little randomness",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rupali-p/entropy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rupali-p/entropy/issues"
+  },
+  "homepage": "https://github.com/rupali-p/entropy#readme",
+  "devDependencies": {
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3"
+  }
+}
