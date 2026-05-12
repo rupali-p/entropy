@@ -1,59 +1,136 @@
-<!DOCTYPE html>
-<html style="background: #121212; color: white; font-family: sans-serif; text-align: center;">
-<body  style="display:flex; justify-content: center; align-items: center; height: 100vh; margin: 0;";>
+<!doctype html>
+<html
+  style="
+    background: #121212;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+  "
+>
+  <body
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    "
+    ;
+  >
     <div>
-    <h2>Kettlebell Loader</h2>
-    <p>Target Weight (Total):</p>
-    <input type="number" min="0", max="20" step="0.25" id="target" value="0" style="padding: 10px; font-size: 1.2rem;">
-    
-    <div id="resultContainer" style="margin-top: 20px; font-size: 1.5rem; font-weight: bold; color: #00ff88;">
+      <h2>Kettlebell Loader</h2>
+      <p>Target Weight (Total):</p>
+      <input
+        type="number"
+        min="0"
+        ,
+        max="20"
+        step="0.25"
+        id="target"
+        value="0"
+        style="padding: 10px; font-size: 1.2rem"
+      />
+
+      <div
+        id="resultContainer"
+        style="
+          margin-top: 20px;
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #00ff88;
+        "
+      >
         <text id="result">Nothing to see here </text>
-        <br/>
-        <svg id="plates" width="100" height="50" xmlns="http://www.w3.org/2000/svg">
-            <rect radius="10px" width="75" height="25" x="10" y="10" rx="10" ry="20" fill="#00ff88" />
-            <text id="plateWeight" x="50" y="25" fill="black" font-size="10" text-anchor="middle" id="total-weight-display">0kg</text>
-
+        <br />
+        <svg
+          id="plates"
+          width="100"
+          height="50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            radius="10px"
+            width="75"
+            height="25"
+            x="10"
+            y="10"
+            rx="10"
+            ry="20"
+            fill="#00ff88"
+          />
+          <text
+            id="plateWeight"
+            x="50"
+            y="25"
+            fill="black"
+            font-size="10"
+            text-anchor="middle"
+            id="total-weight-display"
+          >
+            0kg
+          </text>
         </svg>
-    </div>
+      </div>
 
-    
-    <svg id="kettlebell" width="100" height="120" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M30 40C30 20 40 10 50 10C60 10 70 20 70 40" stroke="#555" stroke-width="8"/>
-        <circle cx="50" cy="70" r="50" fill="#222"/>
-        <text id="kettlebellWeight" x="50" y="75" fill="white" font-size="12" text-anchor="middle" id="total-weight-display">0kg</text>
-    </svg>
+      <svg
+        id="kettlebell"
+        width="100"
+        height="120"
+        viewBox="0 0 100 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M30 40C30 20 40 10 50 10C60 10 70 20 70 40"
+          stroke="#555"
+          stroke-width="8"
+        />
+        <circle cx="50" cy="70" r="50" fill="#222" />
+        <text
+          id="kettlebellWeight"
+          x="50"
+          y="75"
+          fill="white"
+          font-size="12"
+          text-anchor="middle"
+          id="total-weight-display"
+        >
+          0kg
+        </text>
+      </svg>
 
-
-   
-
-    <script>
+      <script>
         const plates = [2, 1.5, 1.25];
         const kettleWeight = 0;
 
         document.getElementById('target').addEventListener('input', (e) => {
-            let remaining = (e.target.value - kettleWeight);
-            let output = [];
-            
-            if (remaining < 0) {
-                document.getElementById('result').innerText = "Too light!";
-                return;
+          let remaining = e.target.value - kettleWeight;
+          let output = [];
+
+          if (remaining < 0) {
+            document.getElementById('result').innerText = 'Too light!';
+            return;
+          }
+
+          plates.forEach((p) => {
+            while (remaining >= p) {
+              output.push(p);
+              remaining -= p;
             }
-            
-            plates.forEach(p => {
-                while (remaining >= p) {
-                    output.push(p);
-                    remaining -= p;
-                }
-            });
+          });
 
-            document.getElementById('plateWeight').innerHTML = output.length ? output.join('kg, ') + 'kg' : "Just the kettlebell";
-            document.getElementById('result').innerHTML = 
-                "Stack: <br>" + (output.length ? output.join('kg, ') + 'kg' : "Just the kettlebell");
-            document.getElementById('kettlebellWeight').innerHTML = (e.target.value )+ "kg";
+          document.getElementById('plateWeight').innerHTML = output.length
+            ? output.join('kg, ') + 'kg'
+            : 'Just the kettlebell';
+          document.getElementById('result').innerHTML =
+            'Stack: <br>' +
+            (output.length
+              ? output.join('kg, ') + 'kg'
+              : 'Just the kettlebell');
+          document.getElementById('kettlebellWeight').innerHTML =
+            e.target.value + 'kg';
         });
-    </script>
+      </script>
     </div>
-
-</body>
+  </body>
 </html>
-
