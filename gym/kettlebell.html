@@ -19,12 +19,10 @@
   >
     <div>
       <h2>Kettlebell Loader</h2>
-      <p>Target Weight (Total):</p>
+      <p>Target Weight (Total): <span id="maxDisplay"></span></p>
       <input
         type="number"
         min="0"
-        ,
-        max="20"
         step="0.25"
         id="target"
         value="0"
@@ -60,13 +58,12 @@
               fill="#00ff88"
             />
             <text
-              id="plateWeight1"
+              id="plateWeightText"
               x="50"
               y="25"
               fill="black"
               font-size="10"
               text-anchor="middle"
-              id="total-weight-display"
             >
               0kg
             </text>
@@ -95,7 +92,6 @@
           fill="white"
           font-size="12"
           text-anchor="middle"
-          id="total-weight-display"
         >
           0kg
         </text>
@@ -104,97 +100,102 @@
       <script>
         const plates = [2, 1.5, 1.25];
         const kettleWeight = 1;
-        const maxTargetWeight = 20;
-        let targetWeightPlates = [];
+        const maxPerSize = 4;
 
-        const plateToWeightMapping = (targetWeight) => {
-          console.log('*** targetWeight', { targetWeight });
+        const maxTotalWeight = plates.reduce(
+          (sum, p) => sum + p * maxPerSize,
+          kettleWeight
+        );
 
-          if (targetWeight === maxTargetWeight) {
-            console.log('*** maxTargetWeight', { maxTargetWeight });
-            targetWeightPlates = plates.reduce((acc, curr) => {
-              console.log(acc, curr);
-              return [...acc, curr, curr, curr, curr];
-            }, []);
-            return targetWeightPlates;
+        const round2 = (n) => Math.round(n * 100) / 100;
+
+        const calculatePlates = (targetWeight) => {
+          let remaining = round2(targetWeight - kettleWeight);
+          if (remaining <= 0) return [];
+
+          const result = [];
+          for (const p of plates) {
+            let count = 0;
+            while (remaining >= p && count < maxPerSize) {
+              result.push(p);
+              remaining = round2(remaining - p);
+              count++;
+            }
           }
+          return result;
         };
 
-        document.getElementById('target').addEventListener('input', (e) => {
-          let remaining = e.target.value - kettleWeight;
-          let output = [];
+        const targetInput = document.getElementById('target');
+        targetInput.max = maxTotalWeight;
+        document.getElementById('maxDisplay').textContent =
+          '(max ' + maxTotalWeight + 'kg)';
 
-          if (remaining < 0) {
+        targetInput.addEventListener('input', (e) => {
+          const target = parseFloat(e.target.value);
+
+          document.getElementById('kettlebellWeight').innerHTML =
+            target + 'kg';
+
+          if (target < kettleWeight) {
             document.getElementById('result').innerText = 'Too light!';
             return;
           }
 
-          plates.forEach((p) => {
-            while (remaining >= p) {
-              output.push(p);
-              remaining -= p;
-            }
-          });
-          const platesToAdd = plateToWeightMapping(
-            parseInt(e.target.value),
-            10
-          );
-          console.log('*** platesToAdd', { platesToAdd });
+          if (target > maxTotalWeight) {
+            document.getElementById('result').innerText =
+              'Too heavy! Max is ' + maxTotalWeight + 'kg';
+            return;
+          }
 
-          let plateId = 0;
-          let yPlate = 10;
-          let yText = 25;
+          const platesToAdd = calculatePlates(target);
 
-          platesToAdd.forEach((plate) => {
-            const newPlate = document.createElementNS(
+          const platesContainer = document.getElementById('plates');
+          platesContainer
+            .querySelectorAll('g[id^="plate-"]')
+            .forEach((el) => el.remove());
+
+          let y = 10;
+          platesToAdd.forEach((plate, i) => {
+            const g = document.createElementNS(
               'http://www.w3.org/2000/svg',
               'g'
             );
-            newPlate.setAttribute('id', `plate-${plateId}`);
-            const plateSvg = `<rect
-                radius="10px"
-                width="75"
-                height="25"
-                x="10"
-                y="${yPlate}"
-                rx="10"
-                ry="20"
-                fill="#00ff88"
-              />
-              <text
-                id="plateWeight1"
-                x="50"
-                y="${yText}"
-                fill="black"
-                font-size="10"
-                text-anchor="middle"
-              >
-                ${plate}kg
-              </text>
-            </g>`;
-            newPlate.innerHTML = plateSvg;
-            // dynamically add plate to plates
-            const plates1 = document.getElementById('plates');
-            plates1.appendChild(newPlate);
+            g.setAttribute('id', `plate-${i}`);
 
-            plateId++;
-            yPlate = yPlate + 30;
-            yText = yPlate + 15;
-            const plates2 = document.getElementById('plates');
+            const rect = document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'rect'
+            );
+            rect.setAttribute('width', '75');
+            rect.setAttribute('height', '25');
+            rect.setAttribute('x', '10');
+            rect.setAttribute('y', y);
+            rect.setAttribute('rx', '10');
+            rect.setAttribute('ry', '20');
+            rect.setAttribute('fill', '#00ff88');
+            g.appendChild(rect);
 
-            console.log({ newPlate, plates2 });
+            const text = document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'text'
+            );
+            text.setAttribute('x', '50');
+            text.setAttribute('y', y + 15);
+            text.setAttribute('fill', 'black');
+            text.setAttribute('font-size', '10');
+            text.setAttribute('text-anchor', 'middle');
+            text.textContent = plate + 'kg';
+            g.appendChild(text);
+
+            platesContainer.appendChild(g);
+            y += 30;
           });
 
-          document.getElementById('plateWeight').innerHTML = output.length
-            ? output.join('kg, ') + 'kg' + ' ' + platesToAdd
-            : 'Just the kettlebell ' + platesToAdd;
           document.getElementById('result').innerHTML =
             'Stack: <br>' +
-            (output.length
-              ? output.join('kg, ') + 'kg'
+            (platesToAdd.length
+              ? platesToAdd.join('kg, ') + 'kg'
               : 'Just the kettlebell');
-          document.getElementById('kettlebellWeight').innerHTML =
-            e.target.value + 'kg';
         });
       </script>
     </div>
