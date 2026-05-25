@@ -42,33 +42,11 @@
         <br />
         <svg
           id="plates"
-          width="100"
+          viewBox="0 0 360 100"
+          width="360"
           height="100"
           xmlns="http://www.w3.org/2000/svg"
-        >
-          <g id="plate1">
-            <rect
-              radius="10px"
-              width="75"
-              height="25"
-              x="10"
-              y="10"
-              rx="10"
-              ry="20"
-              fill="#00ff88"
-            />
-            <text
-              id="plateWeightText"
-              x="50"
-              y="25"
-              fill="black"
-              font-size="10"
-              text-anchor="middle"
-            >
-              0kg
-            </text>
-          </g>
-        </svg>
+        ></svg>
       </div>
 
       <svg
@@ -133,8 +111,7 @@
         targetInput.addEventListener('input', (e) => {
           const target = parseFloat(e.target.value);
 
-          document.getElementById('kettlebellWeight').innerHTML =
-            target + 'kg';
+          document.getElementById('kettlebellWeight').innerHTML = target + 'kg';
 
           if (target < kettleWeight) {
             document.getElementById('result').innerText = 'Too light!';
@@ -150,17 +127,18 @@
           const platesToAdd = calculatePlates(target);
 
           const platesContainer = document.getElementById('plates');
-          platesContainer
-            .querySelectorAll('g[id^="plate-"]')
-            .forEach((el) => el.remove());
+          platesContainer.replaceChildren();
 
-          let y = 10;
           platesToAdd.forEach((plate, i) => {
+            const col = Math.floor(i / 3);
+            const row = i % 3;
+            const x = 10 + col * 85;
+            const y = 10 + row * 30;
+
             const g = document.createElementNS(
               'http://www.w3.org/2000/svg',
               'g'
             );
-            g.setAttribute('id', `plate-${i}`);
 
             const rect = document.createElementNS(
               'http://www.w3.org/2000/svg',
@@ -168,7 +146,7 @@
             );
             rect.setAttribute('width', '75');
             rect.setAttribute('height', '25');
-            rect.setAttribute('x', '10');
+            rect.setAttribute('x', x);
             rect.setAttribute('y', y);
             rect.setAttribute('rx', '10');
             rect.setAttribute('ry', '20');
@@ -179,8 +157,8 @@
               'http://www.w3.org/2000/svg',
               'text'
             );
-            text.setAttribute('x', '50');
-            text.setAttribute('y', y + 15);
+            text.setAttribute('x', x + 37.5);
+            text.setAttribute('y', y + 16);
             text.setAttribute('fill', 'black');
             text.setAttribute('font-size', '10');
             text.setAttribute('text-anchor', 'middle');
@@ -188,7 +166,6 @@
             g.appendChild(text);
 
             platesContainer.appendChild(g);
-            y += 30;
           });
 
           document.getElementById('result').innerHTML =
