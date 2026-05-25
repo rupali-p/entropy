@@ -129,10 +129,13 @@
           const platesContainer = document.getElementById('plates');
           platesContainer.replaceChildren();
 
+          const numCols = Math.ceil(platesToAdd.length / 3) || 1;
+          const offsetX = (360 - numCols * 85) / 2;
+
           platesToAdd.forEach((plate, i) => {
             const col = Math.floor(i / 3);
             const row = i % 3;
-            const x = 10 + col * 85;
+            const x = offsetX + col * 85;
             const y = 10 + row * 30;
 
             const g = document.createElementNS(
